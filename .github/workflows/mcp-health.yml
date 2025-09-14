@@ -1,0 +1,89 @@
+name: MCP Health Check Badge
+
+on:
+  workflow_dispatch: {}          # 수동 실행 버튼
+  schedule:
+    - cron: "0 * * * *"          # 매시 정각마다 실행 (원하면 30분마다: "*/30 * * * *")
+
+permissions:
+  contents: write                # 배지(SVG) 파일 커밋하려면 필요
+
+env:
+  # ====== 여기에 "점검할 MCP 목록"을 적으세요 ======
+  # 아래 예시는 샘플입니다. name / url 만 채워도 됩니다.
+  ENDPOINTS: |
+    [
+      { "name": "AlphaVantage PING", "url": "https://mcp.alphavantage.co/PING" },
+      { "name": "My MCP Health",     "url": "https://mcp.example.com/health" }
+    ]
+  # 기대 문자열을 검사하고 싶다면:
+  # { "name": "X", "url": "https://...", "expect": "ok" }
+  # 타임아웃(초) 조정:
+  # { "name": "X", "url": "https://...", "timeout": 5 }
+
+jobs:
+  check-and-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run health checks (Python)
+        id: health
+        run: |
+          python3 - << 'PY'
+          import os, json, ssl, urllib.request, urllib.error, time, sys
+          endpoints = json.loads(os.environ.get("ENDPOINTS","[]"))
+          ctx = ssl.create_default_context()
+          up = 0
+          total = len(endpoints)
+          details = []
+          for ep in endpoints:
+              name = ep.get("name") or ep.get("url")
+              url = ep["url"]
+              method = ep.get("method","GET").upper()
+              expect = ep.get("expect")  # 본문에 이 문자열이 포함되면 OK로 간주(옵션)
+              timeout = int(ep.get("timeout", 8))
+
+              req = urllib.request.Request(url, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
+                      code = resp.getcode()
+                      body = resp.read(2048).decode(errors="ignore")
+                      ok = (200 <= code < 300) and ((expect in body) if expect else True)
+                      if ok: up += 1
+                      details.append({"name": name, "url": url, "code": code, "ok": ok})
+              except Exception as e:
+                  details.append({"name": name, "url": url, "code": 0, "ok": False, "err": str(e)[:200]})
+
+          message = f"{up}/{total} up"
+          color = "success" if up==total else ("orange" if up>0 else "critical")
+          # 결과를 파일로 저장(배지 외, 사람이 확인할 수 있도록)
+          import pathlib, json as _json
+          pathlib.Path("mcp-details.json").write_text(_json.dumps({
+              "checked_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+              "summary": message,
+              "up": up,
+              "total": total,
+              "items": details
+          }, ensure_ascii=False, indent=2), encoding="utf-8")
+
+          # GitHub Actions 출력값 설정
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write(f"message={message}\n")
+              f.write(f"color={color}\n")
+          PY
+
+      - name: Create/Update badge SVG
+        uses: emibcn/badge-action@v2.0.3
+        with:
+          label: MCP
+          status: ${{ steps.health.outputs.message }}
+          color:  ${{ steps.health.outputs.color }}
+          path:   mcp-status.svg   # 리포지토리에 저장될 파일명
+
+      - name: Commit badge & details
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update MCP status badge"
+          file_pattern: "mcp-status.svg mcp-details.json"
