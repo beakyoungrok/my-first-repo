@@ -1,22 +1,20 @@
 {
-  "checked_at": "2025-09-14 04:23:24 UTC",
-  "summary": "0/2 up",
-  "up": 0,
+  "checked_at": "2025-09-14 05:09:40 UTC",
+  "summary": "2/2 up",
+  "up": 2,
   "total": 2,
   "items": [
     {
-      "name": "AlphaVantage PING",
-      "url": "https://mcp.alphavantage.co/PING",
-      "code": 0,
-      "ok": false,
-      "err": "HTTP Error 404: Not Found"
+      "name": "Google 상태",
+      "url": "https://www.google.com",
+      "code": 200,
+      "ok": true
     },
     {
-      "name": "My MCP Health",
-      "url": "https://mcp.example.com/health",
-      "code": 0,
-      "ok": false,
-      "err": "<urlopen error [Errno -2] Name or service not known>"
+      "name": "GitHub API",
+      "url": "https://api.github.com",
+      "code": 200,
+      "ok": true
     }
   ]
 }
