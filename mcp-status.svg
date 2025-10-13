@@ -1,5 +1,5 @@
-<svg width="80.4" height="20" viewBox="0 0 804 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MCP: 2/2 up">
-  <title>MCP: 2/2 up</title>
+<svg width="80.4" height="20" viewBox="0 0 804 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MCP: 1/2 up">
+  <title>MCP: 1/2 up</title>
   <linearGradient id="a" x2="0" y2="100%">
     <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
     <stop offset="1" stop-opacity=".1"/>
@@ -7,14 +7,14 @@
   <mask id="m"><rect width="804" height="200" rx="30" fill="#FFF"/></mask>
   <g mask="url(#m)">
     <rect width="336" height="200" fill="#555"/>
-    <rect width="468" height="200" fill="#success" x="336"/>
+    <rect width="468" height="200" fill="#F73" x="336"/>
     <rect width="804" height="200" fill="url(#a)"/>
   </g>
   <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
     <text x="60" y="148" textLength="236" fill="#000" opacity="0.25">MCP</text>
     <text x="50" y="138" textLength="236">MCP</text>
-    <text x="391" y="148" textLength="368" fill="#000" opacity="0.25">2/2 up</text>
-    <text x="381" y="138" textLength="368">2/2 up</text>
+    <text x="391" y="148" textLength="368" fill="#000" opacity="0.25">1/2 up</text>
+    <text x="381" y="138" textLength="368">1/2 up</text>
   </g>
   
 </svg>
