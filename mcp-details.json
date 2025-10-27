@@ -1,15 +1,14 @@
 {
-  "checked_at": "2025-10-27 22:19:51 UTC",
-  "summary": "1/2 up",
-  "up": 1,
+  "checked_at": "2025-10-27 23:18:58 UTC",
+  "summary": "2/2 up",
+  "up": 2,
   "total": 2,
   "items": [
     {
       "name": "Google 상태",
       "url": "https://www.google.com",
-      "code": 0,
-      "ok": false,
-      "err": "The read operation timed out"
+      "code": 200,
+      "ok": true
     },
     {
       "name": "GitHub API",
